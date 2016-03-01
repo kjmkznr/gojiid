@@ -27,7 +27,7 @@ func main() {
 	logr.Formatter = new(logrus.JSONFormatter)
 	
 	// add request id support to glogrus
-	goji.Use(glogrus.NewGlogrusWithReqId(logr, "myapp", gojiid.FromContext))
+	goji.UseC(glogrus.NewGlogrusWithReqId(logr, "myapp", gojiid.FromContext))
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
