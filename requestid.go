@@ -1,15 +1,15 @@
 package gojiid
 
 import (
-	"os"
 	"crypto/rand"
 	"encoding/base64"
-	"sync/atomic"
-	"strings"
 	"fmt"
-	"net/http"
-	"golang.org/x/net/context"
 	"goji.io"
+	"golang.org/x/net/context"
+	"net/http"
+	"os"
+	"strings"
+	"sync/atomic"
 )
 
 // not exported to avoid collision with other context keys
@@ -22,7 +22,7 @@ const requestIdKey key = 0
 // Headers is a slice of HTTP Header keys used to look for the request id in the HTTP request
 // Generator is a custom function that will return a new request id if one is not already found in the HTTP headers
 type RequestIdConfig struct {
-	Headers []string
+	Headers   []string
 	Generator func(req *http.Request) string
 }
 
@@ -48,7 +48,7 @@ func init() {
 
 // creates the default middleware that just generates an id using the default generator
 func NewRequestId() func(goji.Handler) goji.Handler {
-	config := &RequestIdConfig{make([]string,0), defaultGenerator}
+	config := &RequestIdConfig{make([]string, 0), defaultGenerator}
 	return NewCustomRequestId(config)
 }
 
@@ -56,13 +56,13 @@ func NewRequestId() func(goji.Handler) goji.Handler {
 func NewCustomRequestId(config *RequestIdConfig) func(goji.Handler) goji.Handler {
 	return func(h goji.Handler) goji.Handler {
 		fn := func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-			
+
 			reqId, ok := fromHeaders(config.Headers, r)
-			
+
 			if !ok {
 				reqId = config.Generator(r)
 			}
-			
+
 			if len(reqId) > 0 {
 				ctx = context.WithValue(ctx, requestIdKey, reqId)
 			}
@@ -75,9 +75,9 @@ func NewCustomRequestId(config *RequestIdConfig) func(goji.Handler) goji.Handler
 
 // Returns the request id that may have been previously set in the Context.
 // If no request id was set, returns blank
-func FromContext(ctx context.Context) (string) {
+func FromContext(ctx context.Context) string {
 	requestId, ok := ctx.Value(requestIdKey).(string)
-	
+
 	if ok {
 		return requestId
 	} else {
@@ -93,7 +93,7 @@ func defaultGenerator(req *http.Request) string {
 func fromHeaders(headerKeys []string, req *http.Request) (string, bool) {
 	var reqId string
 	ok := false
-	
+
 	for _, key := range headerKeys {
 		reqId = req.Header.Get(key)
 		if len(reqId) > 0 {
@@ -101,5 +101,5 @@ func fromHeaders(headerKeys []string, req *http.Request) (string, bool) {
 			break
 		}
 	}
-	 return reqId, ok
+	return reqId, ok
 }
