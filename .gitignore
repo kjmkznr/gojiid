@@ -6,6 +6,15 @@
 # Folders
 _obj
 _test
+.DS_Store
+*.swp
+*~
+._*
+*.iml
+.idea
+build
+logs
+pid
 
 # Architecture specific extensions/prefixes
 *.[568vq]
