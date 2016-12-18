@@ -67,7 +67,7 @@ func NewCustomRequestId(config *RequestIdConfig) func(http.Handler) http.Handler
 				ctx = context.WithValue(ctx, requestIdKey, reqId)
 			}
 
-			h.ServeHTTP(w, r)
+			h.ServeHTTP(w, r.WithContext(ctx))
 		}
 		return http.HandlerFunc(fn)
 	}
